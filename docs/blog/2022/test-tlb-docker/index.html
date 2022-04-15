@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="ko">
+  
+  <head>
+
+
+    
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>  9rum | Docker를 이용해 test-tlb 실행하기</title>
+    <meta name="author" content="  9rum" />
+    <meta name="description" content="Docker를 이용해 Linux가 아닌 환경에서도 test-tlb를 실행하고 테스트를 자동화하기" />
+
+
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha256-DF7Zhf293AJxJNTmh5zhoYYIMs2oXitRfBjY+9L//AY=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/mdbootstrap@4.20.0/css/mdb.min.css" integrity="sha256-jpjYvU3G3N6nrrBwXJoVEYI/0zw8htfFnhT9ljN3JJw=" crossorigin="anonymous" />
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/academicons@1.9.1/css/academicons.min.css" integrity="sha256-i1+4qU2G2860dGGIOJscdC30s9beBXjFfzjWLjBRsBg=" crossorigin="anonymous">
+<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:100,300,400,500,700|Material+Icons">
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jwarby/jekyll-pygments-themes@master/emacs.css" media="none" id="highlight_theme_light" />
+
+
+
+<link rel="shortcut icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>☁️</text></svg>">
+
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="canonical" href="https://9rum.github.io/blog/2022/test-tlb-docker/">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jwarby/jekyll-pygments-themes@master/emacs.css" media="none" id="highlight_theme_dark" />
+
+<script src="/assets/js/theme.js"></script>
+<script src="/assets/js/dark_mode.js"></script>
+
+
+  </head>
+
+  
+  <body class="fixed-top-nav ">
+
+    <header>
+  
+  <nav id="navbar" class="navbar navbar-light navbar-expand-sm fixed-top">
+    <div class="container">
+      <a class="navbar-brand title font-weight-lighter" href="https://9rum.github.io/"><span class="font-weight-bold"></span>   9rum</a>
+      
+      <button class="navbar-toggler collapsed ml-auto" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar top-bar"></span>
+        <span class="icon-bar middle-bar"></span>
+        <span class="icon-bar bottom-bar"></span>
+      </button>
+
+      <div class="collapse navbar-collapse text-right" id="navbarNav">
+        <ul class="navbar-nav ml-auto flex-nowrap">
+
+          
+          <li class="nav-item ">
+            <a class="nav-link" href="/">about</a>
+          </li>
+          
+          
+          <li class="nav-item active">
+            <a class="nav-link" href="/blog/">blog</a>
+          </li>
+
+          
+          <div class="toggle-container">
+            <a id="light-toggle">
+              <i class="fas fa-moon"></i>
+              <i class="fas fa-sun"></i>
+            </a>
+          </div>
+        </ul>
+      </div>
+    </div>
+  </nav>
+</header>
+
+
+    
+    <div class="container mt-5">
+      
+
+<div class="post">
+  <header class="post-header">
+    <h1 class="post-title">Docker를 이용해 test-tlb 실행하기</h1>
+    <p class="post-meta">April 14, 2022</p>
+    <p class="post-tags">
+      <a href="/blog/2022"> <i class="fas fa-calendar fa-sm"></i> 2022 </a>
+        ·  
+        <a href="/blog/tag/container">
+          <i class="fas fa-hashtag fa-sm"></i> container</a>  
+          <a href="/blog/tag/docker">
+          <i class="fas fa-hashtag fa-sm"></i> docker</a>  
+          <a href="/blog/tag/linux">
+          <i class="fas fa-hashtag fa-sm"></i> linux</a>  
+          <a href="/blog/tag/os">
+          <i class="fas fa-hashtag fa-sm"></i> os</a>  
+          
+        ·  
+        <a href="/blog/category/container">
+          <i class="fas fa-tag fa-sm"></i> container</a>  
+          
+    </p>
+  </header>
+
+  <article class="post-content">
+    <p>블로그 시작하기 좋은 날입니다.</p>
+
+<p>첫 글로 뭘 쓸까 고민하다 친구가 잘 하는 것부터 써보라고 해서, 잘 하는 게 없는 저는 대신 해봤던 걸 쓰기로 했습니다.</p>
+
+<p>이 글은 제가 OS 수업에서 Docker를 사용해 과제를 해결했던 방법을 소개합니다.<br>
+테스트가 안돌아가서 고민하는 학생들이 도움을 얻어가면 좋겠습니다.</p>
+
+<p>0. test-tlb</p>
+
+<p>학부생 시절 OS 수업에서는 이맘때쯤 <em>test-tlb</em>라는 과제가 나왔었습니다.<br>
+  <em>test-tlb</em>를 사용해 memory latency를 측정하고 거꾸로 실험 환경의 TLB(Translation Lookaside Buffer) 구조를 예측해 보는 과제였죠.</p>
+
+<p><em>test-tlb</em>는 Linus Torvalds가 만든, TLB에 의한 memory latency 감소 효과를 실험해 볼 수 있는 비교적 간단한 툴입니다.<br>
+  <a href="https://github.com/torvalds/test-tlb" target="_blank" rel="noopener noreferrer">GitHub에 공개돼 있는 소스</a>를 다운 받아 <code class="language-plaintext highlighter-rouge">make</code>로 빌드하면 바로 실행 파일을 얻을 수 있습니다.<br>
+  그리고 <em>test-tlb</em>는 Linux를 대상 운영체제로 개발되어 있습니다.</p>
+
+<p>1. 운영체제와 실행 파일</p>
+
+<p>요새는 연구하느라 거의 Linux를 써서 잘 안쓰지만, 당시 저는 맥북을 막 구매해서 <del>맥북을 1초라도 더 쓰기 위해</del> 재밌게 개발을 했던 것 같습니다.</p>
+
+<p>Linux, Darwin, Windows와 그 외 많은 커널들은 각자의 목적과 방향성이 있고 서로 다른 장단점이 있지만, 서로 호환되지는 않습니다.</p>
+
+<p>여기서 <strong>서로 호환되지 않는다</strong>는 것은 소프트웨어의 실행이 서로 호환되지 않는다는 뜻입니다.<br>
+  즉, 임의의 운영체제에서 빌드한 응용 프로그램이 다른 운영체제에서는 실행될 수 없거나, 실행 결과가 항상 같을 것을 보장할 수 없다는 것이죠.</p>
+
+<p>이는 (1) 각 운영체제가 서로 다른 실행 파일 포맷을 사용하고 (2) 컴파일러가 하나의 운영체제와 아키텍처에 맞는 하나의 실행 파일만을 생성하기 때문입니다.</p>
+
+<p>다음 실행 결과는 <em>test-tlb</em>가 x86-64 Linux에서 실행될 수 있다는 것을 보여줍니다.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nv">$ </span>make
+  gcc <span class="nt">-g</span> <span class="nt">-Wall</span> <span class="nt">-O</span> test-tlb.c <span class="nt">-o</span> test-tlb <span class="nt">-lm</span>
+  <span class="nv">$ </span>file test-tlb
+  test-tlb: ELF 64-bit LSB pie executable, x86-64, version 1 <span class="o">(</span>SYSV<span class="o">)</span>, dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, BuildID[sha1]<span class="o">=</span>b5ef04fe820566ec020c5a38238c4e6eae6cacac, <span class="k">for </span>GNU/Linux 4.4.0, with debug_info, not stripped
+</code></pre></div></div>
+
+<p>각 운영체제와 아키텍처에 맞는 실행 파일을 만들기 위해 개발자가 매번 다른 코드를 개발하는 것은 상당히 비효율적이기 때문에 이런 문제를 해결하기 위해 JVM이나 cross compiler 등의 해결책들이 제시됐지만, 안타깝게도 <em>test-tlb</em>는 GCC를 사용합니다.<br>
+  그리고 저는 macOS를 사용하고 있었습니다.</p>
+
+<p>2. Docker</p>
+
+<p>그래서 저는 <a href="https://www.docker.com/" target="_blank" rel="noopener noreferrer">Docker</a>를 사용하기로 했습니다.</p>
+
+<p>Virtual Box, VMWare 등의 가상머신을 사용할 수도 있지만, 설치와 부팅이 오래 걸린다는 단점이 있고 Apple Silicon 칩셋이 들어간 M1 Mac의 경우엔 아직 지원이 안됩니다.</p>
+
+<p>반면 Docker는 수초 내로 실행되고 설치와 제거를 명령어 몇 줄로 수행할 수 있습니다.</p>
+
+<p>왜 이런 차이가 생긴 걸까요? VM과 Docker의 동작 방식을 살펴보면 그 이유를 알 수 있습니다.</p>
+
+<p><img src="/assets/image/2022-04-14-test-tlb-docker-0.png" alt=""></p>
+
+<p>가상머신은 <em>Hypervisor</em>를 이용해 하드웨어를 가상화하고 그 위에 Guest OS를 실행해서 <strong>운영체제를 격리하는 방식</strong>으로 동작합니다.<br>
+  하드웨어를 가상화하기 때문에 리소스 스케줄링이 복잡해지고 Guest OS를 부팅하기 때문에 Docker에 비해 느립니다.</p>
+
+<p>반면 Docker는 Host OS 위에 Docker Engine이라는 데몬 프로세스가 실행되고 <em>cgroup</em>, <em>namespace</em>, <em>chroot</em>를 이용해 <strong>프로세스를 격리하는 방식</strong>으로 동작합니다.<br>
+  별도의 가상화 없이 호스트 커널을 공유하는 프로세스만 생성하기 때문에 가상머신보다 빠릅니다. 반면 가상머신은 하드웨어를 가상화하기 때문에 interference 측면에서는 Docker보다 낫습니다.</p>
+
+<p>3. Docker 설치하기</p>
+
+<p>Linux 머신이 있다면 native로 실행하면 되고 Windows 머신이 있다면 <a href="https://docs.microsoft.com/ko-kr/windows/wsl/about" target="_blank" rel="noopener noreferrer">WSL 2</a>를 사용하는 편이 나을 수도 있습니다.<br>
+  하지만 macOS에서는 여러모로 Docker를 사용하는 편이 낫고 <del>내가 나중에 다시 보려고</del> Docker 사용법을 알아두면 활용할 곳이 많습니다.</p>
+
+<ul>
+  <li>
+    <p>macOS</p>
+
+    <p>macOS에는 de facto 패키지 관리자인 <a href="https://brew.sh/" target="_blank" rel="noopener noreferrer">Homebrew</a>가 있습니다.<br>
+패키지 관리자를 사용하는 편이 패키지 관리 측면에서 깔끔하고 효율적이기 때문에 Homebrew를 통해 설치하는 것을 추천합니다.<br>
+Homebrew가 없다면 설치해 줍니다.</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>/bin/bash <span class="nt">-c</span> <span class="s2">"</span><span class="si">$(</span>curl <span class="nt">-fsSL</span> https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh<span class="si">)</span><span class="s2">"</span>
+</code></pre></div>    </div>
+
+    <p>설치하는 데 시간이 좀 걸릴 수도 있습니다. 커피 한 잔 내려서 한 모금 마시고 Docker를 설치해 줍니다.</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>brew <span class="nb">install</span> <span class="nt">--cask</span> docker
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Linux</p>
+
+    <p>Linux는 배포판이 참 많습니다. Debian, RHEL, OpenSUSE, Arch Linux 등 배포판 계열마다 패키지 관리자도 상이합니다.<br>
+하지만 학생들은 Debian 계열의 Ubuntu를 제일 많이 쓰니까 <em>apt</em>를 이용한 설치만 우선 적어두고 후에 추가하도록 하겠습니다.<br>
+우선 HTTPS로 repository를 받아올 수 있도록 사전 설치를 해주고 Docker repository의 GPG key를 등록합니다.</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">sudo </span>apt update
+<span class="nv">$ </span><span class="nb">sudo </span>apt <span class="nb">install </span>ca-certificates curl gnupg lsb-release
+<span class="nv">$ </span>curl <span class="nt">-fsSL</span> https://download.docker.com/linux/ubuntu/gpg | <span class="nb">sudo </span>gpg <span class="nt">--dearmor</span> <span class="nt">-o</span> /usr/share/keyrings/docker-archive-keyring.gpg
+</code></pre></div>    </div>
+
+    <p>Docker의 <code class="language-plaintext highlighter-rouge">stable</code> repository를 추가합니다. <code class="language-plaintext highlighter-rouge">nightly</code>나 <code class="language-plaintext highlighter-rouge">test</code> 버전도 있지만 명확한 이유가 없다면 굳이 사용할 필요는 없습니다.</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">echo</span> <span class="s2">"deb [arch=</span><span class="si">$(</span>dpkg <span class="nt">--print-architecture</span><span class="si">)</span><span class="s2"> signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu </span><span class="si">$(</span>lsb_release <span class="nt">-cs</span><span class="si">)</span><span class="s2"> stable"</span> | <span class="nb">sudo tee</span> /etc/apt/sources.list.d/docker.list <span class="o">&gt;</span> /dev/null
+</code></pre></div>    </div>
+
+    <p>이제 Docker repository가 추가되었으니 Docker를 설치해 줍니다.</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">sudo </span>apt update
+<span class="nv">$ </span><span class="nb">sudo </span>apt <span class="nb">install </span>docker-ce docker-ce-cli containerd.io
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Docker 실행하기</p>
+
+    <p>이제 Docker가 설치됐으니 Docker Engine을 켜줘야 합니다. 그냥 <code class="language-plaintext highlighter-rouge">docker</code> 명령을 수행하면 다음과 같이 Docker가 실행 중이지 않다고 나옵니다.</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>docker version
+Client:
+Version:           20.10.12
+API version:       1.41
+Go version:        go1.17.5
+Git commit:        e91ed5707e
+Built:             Mon Dec 13 22:31:40 2021
+OS/Arch:           linux/amd64
+Context:           default
+Experimental:      <span class="nb">true
+</span>Cannot connect to the Docker daemon at unix:///var/run/docker.sock. Is the docker daemon running?
+</code></pre></div>    </div>
+
+    <p>아직 Docker Engine을 켜지 않았기 때문입니다.<br>
+macOS에서는 Docker app을 실행하면 되고 Linux에서는 다음과 같이 <code class="language-plaintext highlighter-rouge">systemctl</code>을 이용해 Docker Engine을 켜줍니다.</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">sudo </span>systemctl start docker
+<span class="nv">$ </span>docker version
+Client:
+Version:           20.10.12
+API version:       1.41
+Go version:        go1.17.5
+Git commit:        e91ed5707e
+Built:             Mon Dec 13 22:31:40 2021
+OS/Arch:           linux/amd64
+Context:           default
+Experimental:      <span class="nb">true
+
+</span>Server:
+Engine:
+  Version:          20.10.12
+  API version:      1.41 <span class="o">(</span>minimum version 1.12<span class="o">)</span>
+  Go version:       go1.17.5
+  Git commit:       459d0dfbbb
+  Built:            Mon Dec 13 22:30:43 2021
+  OS/Arch:          linux/amd64
+  Experimental:     <span class="nb">false
+</span>containerd:
+  Version:          v1.6.1
+  GitCommit:        10f428dac7cec44c864e1b830a4623af27a9fc70.m
+runc:
+  Version:          1.1.0
+  GitCommit:        v1.1.0-0-g067aaf85
+docker-init:
+  Version:          0.19.0
+  GitCommit:        de40ad0
+</code></pre></div>    </div>
+
+    <p>잘 켜졌는데 매번 <code class="language-plaintext highlighter-rouge">sudo</code>를 붙여서 Docker Engine을 켜주는 건 귀찮습니다. <code class="language-plaintext highlighter-rouge">sudo</code> 없이 <code class="language-plaintext highlighter-rouge">docker</code> 명령을 실행하고 부팅 시 Docker Engine을 켜주도록 합니다.</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">sudo </span>usermod <span class="nt">-aG</span> docker <span class="nv">$USER</span>
+<span class="nv">$ </span><span class="nb">sudo </span>systemctl <span class="nb">enable </span>docker.service
+<span class="nv">$ </span><span class="nb">sudo </span>systemctl <span class="nb">enable </span>containerd.service
+</code></pre></div>    </div>
+
+    <p>이제 Dockerfile 작성해서 실험만 하면 됩니다.</p>
+  </li>
+</ul>
+
+<p>4. Dockerfile 만들고 실행하기</p>
+
+<p>Docker는 <em>컨테이너</em>라는 단위로 프로세스를 격리하고 관리합니다.<br>
+  각 컨테이너는 <em>Docker Image</em>라는 리소스와 실행파일 묶음을 실행한 결과이고 개발자는 <em>Dockerfile</em>이라는 DSL(Domain Specific Language)과 <code class="language-plaintext highlighter-rouge">docker</code> 명령을 통해 Docker Image를 생성하고 이를 실행하여 컨테이너를 띄울 수 있습니다.</p>
+
+<p><em>test-tlb</em>를 실행하는 Docker Image를 만드려면 다음과 같은 Dockerfile을 작성하면 됩니다.</p>
+
+<figure class="highlight"><pre><code class="language-dockerfile" data-lang="dockerfile"><table class="rouge-table"><tbody><tr>
+<td class="gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+</pre></td>
+<td class="code"><pre>  FROM ubuntu:20.04
+
+  RUN apt-get update
+  RUN apt-get install -y git make gcc
+
+  WORKDIR /etc/
+  RUN git clone https://github.com/torvalds/test-tlb.git
+
+  WORKDIR /etc/test-tlb/
+  RUN make
+
+  CMD make run
+</pre></td>
+</tr></tbody></table></code></pre></figure>
+
+<p>작성한 Dockerfile로 <em>test-tlb</em>라는 이름의 Docker Image를 빌드합니다.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nv">$ </span>docker build <span class="nt">-t</span> test-tlb <span class="nb">.</span>
+</code></pre></div></div>
+
+<p>Docker Image가 잘 만들어졌는지 확인하려면 <code class="language-plaintext highlighter-rouge">docker images</code>를 사용하면 됩니다.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nv">$ </span>docker images
+  REPOSITORY   TAG      IMAGE ID       CREATED         SIZE
+  test-tlb     latest   17a556141e8a   5 minutes ago   353MB
+  ubuntu       20.04    825d55fb6340   9 days ago      72.8MB
+</code></pre></div></div>
+
+<p>이제 컨테이너를 띄워봅시다. 컨테이너 실행 명령은 <code class="language-plaintext highlighter-rouge">docker run</code>입니다.<br>
+  결과를 파일로 저장하고 싶으면 redirection(<code class="language-plaintext highlighter-rouge">&gt;</code>)을 사용하면 됩니다.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nv">$ </span>docker run test-tlb <span class="o">&gt;</span> result
+</code></pre></div></div>
+
+<p>이제 Dockerfile의 마지막 줄만 <code class="language-plaintext highlighter-rouge">make run</code> 대신 map size와 stride를 바꿔가며 실행하면 됩니다.</p>
+
+<p>다음 포스팅에서는 TLB에 대해 알아보고 실험 결과를 분석해 보겠습니다.</p>
+
+  </article>
+
+</div>
+
+    </div>
+
+    
+<footer class="fixed-bottom">
+  <div class="container mt-0">
+    Copyright © 2022   9rum. Last updated: April 15, 2022.
+  </div>
+</footer>
+
+    
+    
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+
+    
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.2/dist/umd/popper.min.js" integrity="sha256-l/1pMF/+J4TThfgARS6KwWrk/egwuVvhRzfLAMQ6Ds4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.min.js" integrity="sha256-SyTu6CwrfOhaznYZPoolVw2rxoY7lKYKQvqbtqN93HI=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mdbootstrap@4.20.0/js/mdb.min.js" integrity="sha256-NdbiivsvWt7VYCt6hYNT3h/th9vSTL4EDWeGs5SN3DA=" crossorigin="anonymous"></script>
+
+    
+  <script defer src="https://cdn.jsdelivr.net/npm/masonry-layout@4.2.2/dist/masonry.pkgd.min.js" integrity="sha256-Nn1q/fx0H7SNLZMQ5Hw5JLaTRZp0yILA/FRexe19VdI=" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/imagesloaded@4/imagesloaded.pkgd.min.js"></script>
+  <script defer src="/assets/js/masonry.js" type="text/javascript"></script>
+    
+  
+  <script src="https://cdn.jsdelivr.net/npm/medium-zoom@1.0.6/dist/medium-zoom.min.js" integrity="sha256-EdPgYcPk/IIrw7FYeuJQexva49pVRZNmt3LculEr7zM=" crossorigin="anonymous"></script>
+  <script src="/assets/js/zoom.js"></script>
+  <script src="/assets/js/common.js"></script>
+
+    
+  <script type="text/javascript">
+    window.MathJax = {
+      tex: {
+        tags: 'ams'
+      }
+    };
+  </script>
+  <script defer type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js"></script>
+  <script defer src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+
+    
+  </body>
+</html>
+
