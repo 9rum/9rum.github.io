@@ -118,7 +118,7 @@
 <p>첫 글로 뭘 쓸까 고민하다 친구가 잘 하는 것부터 써보라고 해서, 잘 하는 게 없는 저는 대신 해봤던 걸 쓰기로 했습니다.</p>
 
 <p>이 글은 제가 OS 수업에서 Docker를 사용해 과제를 해결했던 방법을 소개합니다.<br>
-테스트가 안돌아가서 고민하는 학생들이 도움을 얻어가면 좋겠습니다.</p>
+테스트가 안돌아가서 고민하는 분들이 도움을 얻어가면 좋겠습니다.</p>
 
 <p>0. test-tlb</p>
 
@@ -127,7 +127,7 @@
 
 <p><em>test-tlb</em>는 Linus Torvalds가 만든, TLB에 의한 memory latency 감소 효과를 실험해 볼 수 있는 비교적 간단한 툴입니다.<br>
   <a href="https://github.com/torvalds/test-tlb" target="_blank" rel="noopener noreferrer">GitHub에 공개돼 있는 소스</a>를 다운 받아 <code class="language-plaintext highlighter-rouge">make</code>로 빌드하면 바로 실행 파일을 얻을 수 있습니다.<br>
-  그리고 <em>test-tlb</em>는 Linux를 대상 운영체제로 개발되어 있습니다.</p>
+  그리고 <em>test-tlb</em>는 Linux를 대상 운영체제로 작성되어 있습니다.</p>
 
 <p>1. 운영체제와 실행 파일</p>
 
@@ -140,7 +140,7 @@
 
 <p>이는 (1) 각 운영체제가 서로 다른 실행 파일 포맷을 사용하고 (2) 컴파일러가 하나의 운영체제와 아키텍처에 맞는 하나의 실행 파일만을 생성하기 때문입니다.</p>
 
-<p>다음 실행 결과는 <em>test-tlb</em>가 x86-64 Linux에서 실행될 수 있다는 것을 보여줍니다.</p>
+<p>다음 실행 결과는 <em>test-tlb</em>가 x86_64 Linux에서 실행될 수 있음을 나타냅니다.</p>
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nv">$ </span>make
   gcc <span class="nt">-g</span> <span class="nt">-Wall</span> <span class="nt">-O</span> test-tlb.c <span class="nt">-o</span> test-tlb <span class="nt">-lm</span>
@@ -148,7 +148,7 @@
   test-tlb: ELF 64-bit LSB pie executable, x86-64, version 1 <span class="o">(</span>SYSV<span class="o">)</span>, dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, BuildID[sha1]<span class="o">=</span>b5ef04fe820566ec020c5a38238c4e6eae6cacac, <span class="k">for </span>GNU/Linux 4.4.0, with debug_info, not stripped
 </code></pre></div></div>
 
-<p>각 운영체제와 아키텍처에 맞는 실행 파일을 만들기 위해 개발자가 매번 다른 코드를 개발하는 것은 상당히 비효율적이기 때문에 이런 문제를 해결하기 위해 JVM이나 cross compiler 등의 해결책들이 제시됐지만, 안타깝게도 <em>test-tlb</em>는 GCC를 사용합니다.<br>
+<p>각 운영체제와 아키텍처에 맞는 실행 파일을 만들기 위해 개발자가 매번 다른 코드를 개발하는 것은 상당히 비효율적이기 때문에 이런 문제를 해결하기 위해 JVM이나 cross compiler 등의 해결책들이 제시됐지만, 아쉽게도 <em>test-tlb</em>는 GCC를 사용합니다.<br>
   그리고 저는 macOS를 사용하고 있었습니다.</p>
 
 <p>2. Docker</p>
@@ -342,7 +342,7 @@ docker-init:
 
 <p>이제 Dockerfile의 마지막 줄만 <code class="language-plaintext highlighter-rouge">make run</code> 대신 map size와 stride를 바꿔가며 실행하면 됩니다.</p>
 
-<p>다음 포스팅에서는 TLB에 대해 알아보고 실험 결과를 분석해 보겠습니다.</p>
+<p>다음 글에서는 TLB에 대해 알아보고 실험 결과를 분석해 보겠습니다.</p>
 
   </article>
 
