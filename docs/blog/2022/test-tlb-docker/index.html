@@ -161,7 +161,7 @@
 
 <p>왜 이런 차이가 생긴 걸까요? VM과 Docker의 동작 방식을 살펴보면 그 이유를 알 수 있습니다.</p>
 
-<p><img src="/assets/image/2022-04-14-test-tlb-docker-0.png" alt=""></p>
+<p><img src="/assets/image/vm-docker.webp" alt="" width="1000"></p>
 
 <p>가상머신은 <em>Hypervisor</em>를 이용해 하드웨어를 가상화하고 그 위에 Guest OS를 실행해서 <strong>운영체제를 격리하는 방식</strong>으로 동작합니다.<br>
   하드웨어를 가상화하기 때문에 리소스 스케줄링이 복잡해지고 Guest OS를 부팅하기 때문에 Docker에 비해 느립니다.</p>
@@ -281,18 +281,18 @@ docker-init:
 <span class="nv">$ </span><span class="nb">sudo </span>systemctl <span class="nb">enable </span>containerd.service
 </code></pre></div>    </div>
 
-    <p>이제 Dockerfile 작성해서 실험만 하면 됩니다.</p>
+    <p>이제 Dockerfile을 작성하고 실험만 하면 됩니다.</p>
   </li>
 </ul>
 
 <p>4. Dockerfile 만들고 실행하기</p>
 
 <p>Docker는 <em>컨테이너</em>라는 단위로 프로세스를 격리하고 관리합니다.<br>
-  각 컨테이너는 <em>Docker Image</em>라는 리소스와 실행파일 묶음을 실행한 결과이고 개발자는 <em>Dockerfile</em>이라는 DSL(Domain Specific Language)과 <code class="language-plaintext highlighter-rouge">docker</code> 명령을 통해 Docker Image를 생성하고 이를 실행하여 컨테이너를 띄울 수 있습니다.</p>
+  각 컨테이너는 <em>Docker Image</em>라는 리소스와 실행파일 묶음을 실행한 결과이고, 개발자는 <em>Dockerfile</em>이라는 DSL(Domain Specific Language)과 <code class="language-plaintext highlighter-rouge">docker</code> 명령을 통해 Docker Image를 생성하고 이를 실행하여 컨테이너를 띄울 수 있습니다.</p>
 
 <p><em>test-tlb</em>를 실행하는 Docker Image를 만드려면 다음과 같은 Dockerfile을 작성하면 됩니다.</p>
 
-<figure class="highlight"><pre><code class="language-dockerfile" data-lang="dockerfile"><table class="rouge-table"><tbody><tr>
+<figure class="highlight"><pre><code class="language-docker" data-lang="docker"><table class="rouge-table"><tbody><tr>
 <td class="gutter gl"><pre class="lineno">1
 2
 3
@@ -305,6 +305,8 @@ docker-init:
 10
 11
 12
+13
+14
 </pre></td>
 <td class="code"><pre>  FROM ubuntu:20.04
 
@@ -318,6 +320,8 @@ docker-init:
   RUN make
 
   CMD make run
+
+  
 </pre></td>
 </tr></tbody></table></code></pre></figure>
 
@@ -353,7 +357,7 @@ docker-init:
     
 <footer class="fixed-bottom">
   <div class="container mt-0">
-    Copyright © 2022   9rum. Last updated: April 15, 2022.
+    Copyright © 2022   9rum. Last updated: April 16, 2022.
   </div>
 </footer>
 
