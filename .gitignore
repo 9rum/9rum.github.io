@@ -1,0 +1,10 @@
+# macOS files
+.DS_Store
+
+# Jekyll generated directories and files
+.ruby-version
+Gemfile.lock
+.bundle
+.sass-cache/
+.jekyll-cache/
+.jekyll-metadata
