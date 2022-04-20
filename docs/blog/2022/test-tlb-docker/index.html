@@ -206,7 +206,7 @@ test-tlb: ELF 64-bit LSB pie executable, x86-64, version 1 <span class="o">(</sp
 
 <p>왜 이런 차이가 생긴 걸까요? VM과 Docker의 동작 방식을 살펴보면 그 이유를 알 수 있습니다.</p>
 
-<p><img src="/assets/image/vm-docker.webp" alt="" width="1000"></p>
+<p><img src="/assets/image/vm-docker.webp" alt="" width="700"></p>
 
 <p>가상머신은 <em>Hypervisor</em>를 이용해 하드웨어를 가상화하고 그 위에 Guest OS를 실행해서 <strong>운영체제를 격리하는 방식</strong>으로 동작합니다.<br>
 하드웨어를 가상화하기 때문에 리소스 스케줄링이 복잡해지고 Guest OS를 부팅하기 때문에 Docker에 비해 느립니다.</p>
