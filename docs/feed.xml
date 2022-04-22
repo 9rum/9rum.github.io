@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="ko"><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="https://9rum.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://9rum.github.io/" rel="alternate" type="text/html" hreflang="ko" /><updated>2022-04-22T23:01:38+09:00</updated><id>https://9rum.github.io/feed.xml</id><title type="html">blank</title><subtitle></subtitle><entry><title type="html">Docker를 이용해 test-tlb 실행하기</title><link href="https://9rum.github.io/blog/2022/test-tlb-docker/" rel="alternate" type="text/html" title="Docker를 이용해 test-tlb 실행하기" /><published>2022-04-15T00:00:00+09:00</published><updated>2022-04-15T00:00:00+09:00</updated><id>https://9rum.github.io/blog/2022/test-tlb-docker</id><content type="html" xml:base="https://9rum.github.io/blog/2022/test-tlb-docker/"><![CDATA[<p>블로그 시작하기 좋은 날입니다.</p>
+
+<p>첫 글로 뭘 쓸까 고민하다 친구가 잘 하는 것부터 써보라고 해서, 잘 하는 게 없는 저는 대신 해봤던 걸 쓰기로 했습니다.</p>
+
+<p>이 글은 제가 OS 수업에서 Docker를 사용해 과제를 해결했던 방법을 소개합니다.<br />
+테스트가 안돌아가서 고민하는 분들이 도움을 얻어가면 좋겠습니다.</p>
+
+<h3 id="0-test-tlb">0. test-tlb</h3>
+
+<p>학부생 시절 OS 수업에서는 이맘때쯤 <em>test-tlb</em>라는 과제가 나왔었습니다.<br />
+<em>test-tlb</em>를 사용해 memory latency를 측정하고 거꾸로 실험 환경의 TLB(Translation Lookaside Buffer) 구조를 예측해 보는 과제였죠.</p>
+
+<p><em>test-tlb</em>는 Linus Torvalds가 만든, TLB에 의한 memory latency 감소 효과를 실험해 볼 수 있는 비교적 간단한 툴입니다.<br />
+GitHub에 공개된 소스<d-cite key="test-tlb"></d-cite>를 다운 받아 <code class="language-plaintext highlighter-rouge">make</code>로 빌드하면 바로 실행 파일을 얻을 수 있습니다.<br />
+그리고 <em>test-tlb</em>는 Linux를 대상 운영체제로 작성되어 있습니다.</p>
+
+<h3 id="1-운영체제와-실행-파일">1. 운영체제와 실행 파일</h3>
+
+<p>요새는 연구하느라 거의 Linux를 써서 잘 안쓰지만, 당시 저는 맥북을 막 구매해서 <del>맥북을 1초라도 더 쓰기 위해</del> 재밌게 개발을 했던 것 같습니다.</p>
+
+<p>Linux, Darwin, Windows와 그 외 많은 커널들은 각자의 목적과 방향성이 있고 서로 다른 장단점이 있지만, 서로 호환되지는 않습니다.</p>
+
+<p>여기서 <strong>서로 호환되지 않는다</strong>는 것은 소프트웨어의 실행이 서로 호환되지 않는다는 뜻입니다.<br />
+즉, 임의의 운영체제에서 빌드한 응용 프로그램이 다른 운영체제에서는 실행될 수 없거나, 실행 결과가 항상 같을 것을 보장할 수 없다는 것이죠.</p>
+
+<p>이는 (1) 각 운영체제가 서로 다른 실행 파일 포맷을 사용하고 (2) 컴파일러가 하나의 운영체제와 아키텍처에 맞는 하나의 실행 파일만을 생성하기 때문입니다.</p>
+
+<p>다음 실행 결과는 <em>test-tlb</em>가 x86_64 Linux에서 실행될 수 있음을 나타냅니다.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>make
+gcc <span class="nt">-g</span> <span class="nt">-Wall</span> <span class="nt">-O</span> test-tlb.c <span class="nt">-o</span> test-tlb <span class="nt">-lm</span>
+<span class="nv">$ </span>file test-tlb
+test-tlb: ELF 64-bit LSB pie executable, x86-64, version 1 <span class="o">(</span>SYSV<span class="o">)</span>, dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, BuildID[sha1]<span class="o">=</span>b5ef04fe820566ec020c5a38238c4e6eae6cacac, <span class="k">for </span>GNU/Linux 4.4.0, with debug_info, not stripped
+</code></pre></div></div>
+
+<p>각 운영체제와 아키텍처에 맞는 실행 파일을 만들기 위해 개발자가 매번 다른 코드를 개발하는 것은 상당히 비효율적이기 때문에 이런 문제를 해결하기 위해 JVM이나 cross compiler 등의 해결책들이 제시됐지만, 아쉽게도 <em>test-tlb</em>는 GCC를 사용합니다.<br />
+그리고 저는 macOS를 사용하고 있었습니다.</p>
+
+<h3 id="2-docker">2. Docker</h3>
+
+<p>그래서 저는 Docker<d-cite key="docker"></d-cite>를 사용하기로 했습니다.</p>
+
+<p>Virtual Box, VMWare 등의 가상머신을 사용할 수도 있지만, 설치와 부팅이 오래 걸린다는 단점이 있고 Apple Silicon 칩셋이 들어간 M1 Mac의 경우엔 아직 지원이 안됩니다.</p>
+
+<p>반면 Docker는 수초 내로 실행되고 설치와 제거를 명령어 몇 줄로 수행할 수 있습니다.</p>
+
+<p>왜 이런 차이가 생긴 걸까요? VM과 Docker의 동작 방식을 살펴보면 그 이유를 알 수 있습니다.</p>
+
+<p><img src="/assets/image/vm-docker.webp" alt="" width="700" /></p>
+
+<p>가상머신은 <em>Hypervisor</em>를 이용해 하드웨어를 가상화하고 그 위에 Guest OS를 실행해서 <strong>운영체제를 격리하는 방식</strong>으로 동작합니다.<br />
+하드웨어를 가상화하기 때문에 리소스 스케줄링이 복잡해지고 Guest OS를 부팅하기 때문에 Docker에 비해 느립니다.</p>
+
+<p>반면 Docker는 Host OS 위에 Docker Engine이라는 데몬 프로세스가 실행되고 <em>cgroup</em>, <em>namespace</em>, <em>chroot</em>를 이용해 <strong>프로세스를 격리하는 방식</strong>으로 동작합니다.<br />
+별도의 가상화 없이 호스트 커널을 공유하는 프로세스만 생성하기 때문에 가상머신보다 빠릅니다. 반면 가상머신은 하드웨어를 가상화하기 때문에 interference 측면에서는 Docker보다 낫습니다.</p>
+
+<h3 id="3-docker-설치하기">3. Docker 설치하기</h3>
+
+<p>Linux 머신이 있다면 native로 실행하면 되고 Windows 머신이 있다면 WSL 2<d-cite key="wsl2"></d-cite>를 사용하는 편이 나을 수도 있습니다.<br />
+하지만 macOS에서는 여러모로 Docker를 사용하는 편이 낫고 <del>내가 나중에 다시 보려고</del> Docker 사용법을 알아두면 활용할 곳이 많습니다.</p>
+
+<ul>
+  <li>
+    <p>macOS</p>
+
+    <p>macOS에는 de facto 패키지 관리자인 Homebrew<d-cite key="homebrew"></d-cite>가 있습니다.<br />
+패키지 관리자를 사용하는 편이 패키지 관리 측면에서 깔끔하고 효율적이기 때문에 Homebrew를 통해 설치하는 것을 추천합니다.<br />
+Homebrew가 없다면 설치해 줍니다.</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>/bin/bash <span class="nt">-c</span> <span class="s2">"</span><span class="si">$(</span>curl <span class="nt">-fsSL</span> https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh<span class="si">)</span><span class="s2">"</span>
+</code></pre></div>    </div>
+
+    <p>설치하는 데 시간이 좀 걸릴 수도 있습니다. 커피 한 잔 내려서 한 모금 마시고 Docker를 설치해 줍니다.</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>brew <span class="nb">install</span> <span class="nt">--cask</span> docker
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Linux</p>
+
+    <p>Linux는 배포판이 참 많습니다. Debian, RHEL, OpenSUSE, Arch Linux 등 배포판 계열마다 패키지 관리자도 상이합니다.<br />
+하지만 학생들은 Debian 계열의 Ubuntu를 제일 많이 쓰니까 <em>apt</em>를 이용한 설치만 우선 적어두고 후에 추가하도록 하겠습니다.<br />
+우선 HTTPS로 repository를 받아올 수 있도록 사전 설치를 해주고 Docker repository의 GPG key를 등록합니다.</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">sudo </span>apt update
+<span class="nv">$ </span><span class="nb">sudo </span>apt <span class="nb">install </span>ca-certificates curl gnupg lsb-release
+<span class="nv">$ </span>curl <span class="nt">-fsSL</span> https://download.docker.com/linux/ubuntu/gpg | <span class="nb">sudo </span>gpg <span class="nt">--dearmor</span> <span class="nt">-o</span> /usr/share/keyrings/docker-archive-keyring.gpg
+</code></pre></div>    </div>
+
+    <p>Docker의 <code class="language-plaintext highlighter-rouge">stable</code> repository를 추가합니다. <code class="language-plaintext highlighter-rouge">nightly</code>나 <code class="language-plaintext highlighter-rouge">test</code> 버전도 있지만 명확한 이유가 없다면 굳이 사용할 필요는 없습니다.</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">echo</span> <span class="s2">"deb [arch=</span><span class="si">$(</span>dpkg <span class="nt">--print-architecture</span><span class="si">)</span><span class="s2"> signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu </span><span class="si">$(</span>lsb_release <span class="nt">-cs</span><span class="si">)</span><span class="s2"> stable"</span> | <span class="nb">sudo tee</span> /etc/apt/sources.list.d/docker.list <span class="o">&gt;</span> /dev/null
+</code></pre></div>    </div>
+
+    <p>이제 Docker repository가 추가되었으니 Docker를 설치해 줍니다.</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">sudo </span>apt update
+<span class="nv">$ </span><span class="nb">sudo </span>apt <span class="nb">install </span>docker-ce docker-ce-cli containerd.io
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Docker Engine 실행하기</p>
+
+    <p>이제 Docker가 설치됐으니 Docker Engine을 켜줘야 합니다. 그냥 <code class="language-plaintext highlighter-rouge">docker</code> 명령을 수행하면 다음과 같이 Docker가 실행 중이지 않다고 나옵니다.</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>docker version
+Client:
+Version:           20.10.14
+API version:       1.41
+Go version:        go1.18
+Git commit:        a224086349
+Built:             Thu Mar 24 08:56:17 2022
+OS/Arch:           linux/amd64
+Context:           default
+Experimental:      <span class="nb">true
+</span>Cannot connect to the Docker daemon at unix:///var/run/docker.sock. Is the docker daemon running?
+</code></pre></div>    </div>
+
+    <p>아직 Docker Engine을 켜지 않았기 때문입니다.<br />
+macOS에서는 Docker app을 실행하면 되고 Linux에서는 다음과 같이 <code class="language-plaintext highlighter-rouge">systemctl</code>을 이용해 Docker Engine을 켜줍니다.</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">sudo </span>systemctl start docker
+<span class="nv">$ </span>docker version
+Client:
+ Version:           20.10.14
+ API version:       1.41
+ Go version:        go1.18
+ Git commit:        a224086349
+ Built:             Thu Mar 24 08:56:17 2022
+ OS/Arch:           linux/amd64
+ Context:           default
+ Experimental:      <span class="nb">true
+
+</span>Server:
+ Engine:
+  Version:          20.10.14
+  API version:      1.41 <span class="o">(</span>minimum version 1.12<span class="o">)</span>
+  Go version:       go1.18
+  Git commit:       87a90dc786
+  Built:            Thu Mar 24 08:56:03 2022
+  OS/Arch:          linux/amd64
+  Experimental:     <span class="nb">false
+ </span>containerd:
+  Version:          v1.6.2
+  GitCommit:        de8046a5501db9e0e478e1c10cbcfb21af4c6b2d.m
+ runc:
+  Version:          1.1.1
+  GitCommit:        
+ docker-init:
+  Version:          0.19.0
+  GitCommit:        de40ad0
+</code></pre></div>    </div>
+
+    <p>잘 켜졌는데 매번 <code class="language-plaintext highlighter-rouge">sudo</code>를 붙여서 Docker Engine을 켜주는 건 귀찮습니다. <code class="language-plaintext highlighter-rouge">sudo</code> 없이 <code class="language-plaintext highlighter-rouge">docker</code> 명령을 실행하고 부팅 시 Docker Engine을 켜주도록 합니다.</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">sudo </span>usermod <span class="nt">-aG</span> docker <span class="nv">$USER</span>
+<span class="nv">$ </span><span class="nb">sudo </span>systemctl <span class="nb">enable </span>docker.service
+<span class="nv">$ </span><span class="nb">sudo </span>systemctl <span class="nb">enable </span>containerd.service
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<p>이제 Dockerfile을 작성하고 실험만 하면 됩니다.</p>
+
+<h3 id="4-dockerfile-만들고-실행하기">4. Dockerfile 만들고 실행하기</h3>
+
+<p>Docker는 <em>컨테이너</em>라는 단위로 프로세스를 격리하고 관리합니다.<br />
+각 컨테이너는 <em>Docker Image</em>라는 리소스와 실행파일 묶음을 실행한 결과이고, 개발자는 <em>Dockerfile</em>이라는 DSL(Domain Specific Language)과 <code class="language-plaintext highlighter-rouge">docker</code> 명령을 통해 Docker Image를 생성하고 이를 실행하여 컨테이너를 띄울 수 있습니다.</p>
+
+<p><em>test-tlb</em>를 실행하는 Docker Image를 만드려면 다음과 같은 Dockerfile을 작성하면 됩니다.</p>
+
+<div class="language-dockerfile highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">FROM</span><span class="s"> ubuntu:20.04</span>
+
+<span class="k">RUN </span>apt-get update
+<span class="k">RUN </span>apt-get <span class="nb">install</span> <span class="nt">-y</span> git make gcc
+
+<span class="k">WORKDIR</span><span class="s"> /etc/</span>
+<span class="k">RUN </span>git clone https://github.com/torvalds/test-tlb.git
+
+<span class="k">WORKDIR</span><span class="s"> /etc/test-tlb/</span>
+<span class="k">RUN </span>make
+
+<span class="k">CMD</span><span class="s"> make run</span>
+</code></pre></div></div>
+
+<p>작성한 Dockerfile로 <em>test-tlb</em>라는 이름의 Docker Image를 빌드합니다.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>docker build <span class="nt">-t</span> test-tlb <span class="nb">.</span>
+</code></pre></div></div>
+
+<p>Docker Image가 잘 만들어졌는지 확인하려면 <code class="language-plaintext highlighter-rouge">docker images</code>를 사용하면 됩니다.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>docker images
+REPOSITORY   TAG      IMAGE ID       CREATED         SIZE
+test-tlb     latest   17a556141e8a   5 minutes ago   353MB
+ubuntu       20.04    825d55fb6340   9 days ago      72.8MB
+</code></pre></div></div>
+
+<p>이제 컨테이너를 띄워봅시다. 컨테이너 실행 명령은 <code class="language-plaintext highlighter-rouge">docker run</code>입니다.<br />
+결과를 파일로 저장하고 싶으면 redirection(<code class="language-plaintext highlighter-rouge">&gt;</code>)을 사용하면 됩니다.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>docker run test-tlb <span class="o">&gt;</span> result
+</code></pre></div></div>
+
+<p>이제 Dockerfile의 마지막 줄만 <code class="language-plaintext highlighter-rouge">make run</code> 대신 map size와 stride를 바꿔가며 실행하면 됩니다.</p>
+
+<p>다음 글에서는 TLB에 대해 알아보고 실험 결과를 분석해 보겠습니다.</p>]]></content><author><name>9rum</name></author><category term="container" /><category term="container" /><category term="docker" /><category term="linux" /><category term="os" /><summary type="html"><![CDATA[Docker를 이용해 Linux가 아닌 환경에서도 test-tlb를 실행하고 테스트를 자동화하기]]></summary></entry></feed>
