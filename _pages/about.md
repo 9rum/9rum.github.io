@@ -18,8 +18,8 @@ Education
   - Advisor: [Prof. Sungyong Park](https://sites.google.com/view/parksy)
 - B.S. in Computer Science and Engineering, Kookmin University, 2017.03 - 2021.02
 
-Professional Experience
-=======================
+Experience
+==========
 - Research engineer at MaumAI, 2023.03 -
 - Software engineer intern at Concat, 2020.06 - 2020.09
 - Software engineer intern at FlyHigh, 2019.06 - 2019.08
