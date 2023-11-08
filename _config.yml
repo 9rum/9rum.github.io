@@ -5,114 +5,114 @@
 # For technical reasons, this file is *NOT* reloaded automatically when you use
 # `jekyll serve`. If you change this file, please restart the server process.
 
-# Site Settings
-locale                   : "en-US"
-title                    : "Sanha Maeng"
-title_separator          : "-"
-name                     : &name "Sanha Maeng"
-description              : &description ""
-url                      : "https://9rum.github.io"
-baseurl                  : ""
-repository               : "9rum/9rum.github.io"
-teaser                   :
-breadcrumbs              : false
-words_per_minute         : 160
-future                   : true
-read_more                : "disabled"
-talkmap_link             : false
+# Site settings
+locale: "en-US"
+title: "Sanha Maeng"
+title_separator: "-"
+name: &name "Sanha Maeng"
+description: &description ""
+url: "https://9rum.github.io"
+baseurl: ""
+repository: "9rum/9rum.github.io"
+teaser:
+breadcrumbs: false
+words_per_minute: 160
+future: true
+read_more: "disabled"
+talkmap_link: false
 comments:
-  provider               :
+  provider:
   disqus:
-    shortname            :
+    shortname:
   discourse:
-    server               :
+    server:
   facebook:
-    appid                :
-    num_posts            :
-    colorscheme          :
+    appid:
+    num_posts:
+    colorscheme:
 staticman:
-  allowedFields          : ['name', 'email', 'url', 'message']
-  branch                 : "master"
-  commitMessage          : "new comment"
-  filename               : comment-{@timestamp}
-  format                 : "yml"
-  moderation             : true
-  path                   : "_data/comments/{options.slug}"
-  requiredFields         : ['name', 'email', 'message']
+  allowedFields: ["name", "email", "url", "message"]
+  branch: "master"
+  commitMessage: ""
+  filename: comment-{@timestamp}
+  format: "yml"
+  moderation: true
+  path: "_data/comments/{options.slug}"
+  requiredFields: ["name", "email", "message"]
   transforms:
-    email                : "md5"
+    email: "md5"
   generatedFields:
     date:
-      type               : "date"
+      type: "date"
       options:
-        format           : "iso8601"
+        format: "iso8601"
 atom_feed:
-  path                   :
+  path:
 
-# SEO Related
-google_site_verification :
-bing_site_verification   :
-alexa_site_verification  :
-yandex_site_verification :
+# SEO related
+google_site_verification:
+bing_site_verification:
+alexa_site_verification:
+yandex_site_verification:
 
-# Social Sharing
+# Social sharing
 twitter:
-  username               :
+  username:
 facebook:
-  username               :
-  app_id                 :
-  publisher              :
-og_image                 :
+  username:
+  app_id:
+  publisher:
+og_image:
 social:
-  type                   :
-  name                   :
+  type:
+  name:
   links:
 
 # Analytics
 analytics:
-  provider               : false
+  provider: false
   google:
-    tracking_id          :
+    tracking_id:
 
-# Site Author
+# Site author
 author:
-  name             : "Sanha Maeng"
-  avatar           : "profile.jpg"
-  bio              : "Research engineer at MaumAI"
-  location         : "Seoul, Republic of Korea"
-  employer         :
-  pubmed           :
-  googlescholar    :
-  email            : "sanha.maeng@gmail.com"
-  researchgate     :
-  uri              :
-  bitbucket        :
-  codepen          :
-  dribbble         :
-  flickr           :
-  facebook         :
-  foursquare       :
-  github           : "9rum"
-  google_plus      :
-  keybase          :
-  instagram        :
-  impactstory      :
-  lastfm           :
-  linkedin         :
-  orcid            :
-  pinterest        :
-  soundcloud       :
-  stackoverflow    :
-  steam            :
-  tumblr           :
-  twitter          :
-  vine             :
-  weibo            :
-  xing             :
-  youtube          :
-  wikipedia        :
+  name: "Sanha Maeng"
+  avatar: "profile.jpg"
+  bio: "Research engineer at MaumAI"
+  location: "Seoul, Republic of Korea"
+  employer:
+  pubmed:
+  googlescholar:
+  email: "sanha.maeng@gmail.com"
+  researchgate:
+  uri:
+  bitbucket:
+  codepen:
+  dribbble:
+  flickr:
+  facebook:
+  foursquare:
+  github: "9rum"
+  google_plus:
+  keybase:
+  instagram:
+  impactstory:
+  lastfm:
+  linkedin:
+  orcid:
+  pinterest:
+  soundcloud:
+  stackoverflow:
+  steam:
+  tumblr:
+  twitter:
+  vine:
+  weibo:
+  xing:
+  youtube:
+  wikipedia:
 
-# Reading Files
+# Reading files
 include:
   - .htaccess
   - _pages
@@ -149,7 +149,7 @@ lsi: false
 excerpt_separator: "\n\n"
 incremental: false
 
-# Markdown Processing
+# Markdown processing
 kramdown:
   input: GFM
   hard_wrap: false
@@ -177,7 +177,6 @@ collections:
 
 # Defaults
 defaults:
-  # _posts
   - scope:
       path: ""
       type: posts
@@ -188,14 +187,12 @@ defaults:
       comments: true
       share: true
       related: true
-  # _pages
   - scope:
       path: ""
       type: pages
     values:
       layout: single
       author_profile: true
-  # _teaching
   - scope:
       path: ""
       type: teaching
@@ -204,7 +201,6 @@ defaults:
       author_profile: true
       share: true
       comments: true
-  # _publications
   - scope:
       path: ""
       type: publications
@@ -213,7 +209,6 @@ defaults:
       author_profile: true
       share: true
       comments: true
-  # _portfolio
   - scope:
       path: ""
       type: portfolio
@@ -222,7 +217,6 @@ defaults:
       author_profile: true
       share: true
       comment: true
-  # _talks
   - scope:
       path: ""
       type: talks
@@ -234,13 +228,11 @@ defaults:
 # Sass/SCSS
 sass:
   sass_dir: _sass
-  style: compressed # http://sass-lang.com/documentation/file.SASS_REFERENCE.html#output_style
+  style: compressed
 
 # Outputting
 permalink: /:categories/:title/
-# paginate: 5 # amount of posts to show
-# paginate_path: /page:num/
-timezone: America/Los_Angeles # http://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+timezone: Asia/Seoul
 
 # Plugins
 plugins:
@@ -249,7 +241,6 @@ plugins:
   - jekyll-gist
   - jekyll-feed
   - jekyll-redirect-from
-# mimic GitHub Pages with --safe
 whitelist:
   - jekyll-paginate
   - jekyll-sitemap
@@ -257,36 +248,14 @@ whitelist:
   - jekyll-feed
   - jemoji
 
-# Archives
-#  Type
-#  - GitHub Pages compatible archive pages built with Liquid ~> type: liquid (default)
-#  - Jekyll Archives plugin archive pages ~> type: jekyll-archives
-#  Path (examples)
-#  - Archive page should exist at path when using Liquid method or you can
-#    expect broken links (especially with breadcrumbs enabled)
-#  - <base_path>/tags/my-awesome-tag/index.html ~> path: /tags/
-#  - <base_path/categories/my-awesome-category/index.html ~> path: /categories/
-#  - <base_path/my-awesome-category/index.html ~> path: /
 category_archive:
   type: liquid
   path: /categories/
 tag_archive:
   type: liquid
   path: /tags/
-# https://github.com/jekyll/jekyll-archives
-# jekyll-archives:
-#   enabled:
-#     - categories
-#     - tags
-#   layouts:
-#     category: archive-taxonomy
-#     tag: archive-taxonomy
-#   permalinks:
-#     category: /categories/:name/
-#     tag: /tags/:name/
 
-# HTML Compression
-# - http://jch.penibelst.de/
+# HTML compression
 compress_html:
   clippings: all
   ignore:
