@@ -26,4 +26,4 @@ Experience
 
 Publications
 ============
-1. __Sanha Maeng__, Gordon Euhyun Moon and Sungyong Park. Chronica: A Data-Imbalance-Aware Scheduler for Distributed Deep Learning. 2023 IEEE/ACM 23rd International Symposium on Cluster, Cloud and Internet Computing (CCGrid '23) [[paper](https://9rum.github.io/files/ccgrid23-chronica.pdf)]
+1. __Sanha Maeng__, Gordon Euhyun Moon and Sungyong Park, Chronica: A Data-Imbalance-Aware Scheduler for Distributed Deep Learning, 2023 IEEE/ACM 23rd International Symposium on Cluster, Cloud and Internet Computing (CCGrid '23) [[paper](https://9rum.github.io/files/ccgrid23-chronica.pdf)]
