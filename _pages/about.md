@@ -14,15 +14,15 @@ Before joining MaumAI, I received my M.S. in Computer Science and Engineering (C
 
 Education
 =========
-- M.S. in Computer Science and Engineering, Sogang University, 2021.03 - 2023.02
+- M.S. in Computer Science and Engineering, Sogang University, Mar. 2021 - Feb. 2023
   - Advisor: [Prof. Sungyong Park](https://sites.google.com/view/parksy)
-- B.S. in Computer Science and Engineering, Kookmin University, 2017.03 - 2021.02
+- B.S. in Computer Science and Engineering, Kookmin University, Mar. 2017 - Feb. 2021
 
 Experience
 ==========
-- Research engineer at MaumAI, 2023.03 -
-- Software engineer intern at Concat, 2020.06 - 2020.09
-- Software engineer intern at FlyHigh, 2019.06 - 2019.08
+- Research engineer at MaumAI Inc., Mar. 2023 -
+- Software engineer intern at CONCAT Inc., Jun. 2020 - Sep. 2020
+- Software engineer intern at FlyHigh Co., Ltd., Jun. 2019 - Aug. 2019
 
 Publications
 ============
