@@ -7,7 +7,7 @@ redirect_from:
   - /about.html
 ---
 
-I am a principal research engineer at [MaumAI Brain](https://maum-ai.github.io/).
+I am a senior research engineer at [MaumAI Brain](https://maum-ai.github.io/).
 My research interests include parallel and distributed computing systems, with a focus on systems for machine learning.
 
 Before joining MaumAI, I received my M.S. in Computer Science and Engineering (CSE) from Sogang University, where I studied software systems for parallel training of neural networks.
@@ -20,9 +20,9 @@ Education
 
 Experience
 ==========
-- Principal research engineer at MaumAI Inc., Jun. 2024 -
-- Senior research engineer at MaumAI Inc., Aug. 2023 - Jun. 2024
-- Research engineer at MaumAI Inc., Mar. 2023 - Aug. 2023
+- Research engineer at MaumAI Inc., Mar. 2023 -
+  - Senior research engineer, Jul. 2024 -
+  - Research engineer, Mar. 2023 - Jun. 2024
 - Software engineer intern at CONCAT Inc., Jun. 2020 - Sep. 2020
 - Software engineer intern at FlyHigh Co., Ltd., Jun. 2019 - Aug. 2019
 
