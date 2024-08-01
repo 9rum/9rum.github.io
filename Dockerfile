@@ -14,4 +14,4 @@ RUN apt update && \
     apt autoclean && \
     bundle install
 
-ENTRYPOINT jekyll serve --incremental
+ENTRYPOINT ["jekyll", "serve", "--incremental"]
