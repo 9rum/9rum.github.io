@@ -21,8 +21,6 @@ Education
 Experience
 ==========
 - Research engineer at MaumAI Inc., Mar. 2023 -
-  - Senior research engineer, Jul. 2024 -
-  - Research engineer, Mar. 2023 - Jun. 2024
 - Software engineer intern at CONCAT Inc., Jun. 2020 - Sep. 2020
 - Software engineer intern at FlyHigh Co., Ltd., Jun. 2019 - Aug. 2019
 
