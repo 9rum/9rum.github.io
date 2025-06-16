@@ -9,7 +9,7 @@
 locale: "en-US"
 title: "Sanha Maeng"
 title_separator: "-"
-name: &name "Sanha Maeng"
+name: &name ""
 description: &description ""
 url: "https://9rum.github.io"
 baseurl: ""

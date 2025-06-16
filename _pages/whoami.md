@@ -1,10 +1,10 @@
 ---
 permalink: /
-title: "About me"
+title: "Who am I"
 author_profile: true
-redirect_from: 
-  - /about/
-  - /about.html
+redirect_from:
+  - /whoami/
+  - /whoami.html
 ---
 
 I am a research engineer at [MaumAI Brain](https://maum-ai.github.io/).
