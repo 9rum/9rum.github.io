@@ -8,7 +8,7 @@ redirect_from:
 ---
 
 I am a research engineer at [MaumAI Brain](https://maum-ai.github.io/).
-My research interests include parallel and distributed computing systems, with a focus on systems for machine learning.
+My research interests include in the duality of machine learning and computing systems, with a focus on systems for machine learning.
 
 Before joining MaumAI, I received my M.S. in Computer Science and Engineering (CSE) from Sogang University, where I studied software systems for parallel training of neural networks.
 
